@@ -24,10 +24,10 @@ public class FishSpawner : MonoBehaviour
         rt.sizeDelta = new Vector2(100, 100); // pas aan naar wens
 
         // movement toevoegen
-        fish.AddComponent<FishMovementUI>();
+        fish.AddComponent<FishMovement>();
 
         // movement toevoegen
-        fish.AddComponent<FishMovementUI>();
+        fish.AddComponent<FishMovement>();
 
         // --- NIEUW: reset de teken canvas zodat speler een nieuwe vis kan maken ---
         drawingCanvas.ResetCanvas();

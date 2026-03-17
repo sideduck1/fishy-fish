@@ -84,8 +84,8 @@ public class VoiceFishSpawner : MonoBehaviour
             rt.sizeDelta = new Vector2(100, 100);
         }
 
-        if (fish.GetComponent<FishMovementUI>() == null)
-            fish.AddComponent<FishMovementUI>();
+        if (fish.GetComponent<FishMovement>() == null)
+            fish.AddComponent<FishMovement>();
 
         // Reset canvas voor volgende vis
         patternPainter.ResetCanvas();
