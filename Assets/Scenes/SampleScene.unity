@@ -338,7 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fishLimitManager: {fileID: 632563247}
-  patternPainter: {fileID: 0}
+  patternPainter: {fileID: 1967775771}
   fishPrefab: {fileID: 752428401192462624, guid: 9d2dc571b8a881b49806b1c14d67b8bf, type: 3}
   spawnParent: {fileID: 676869866}
   silentTimeToSpawn: 1
@@ -355,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c29adfbb35047124cb8608056aa85a3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxFish: 5
+  maxFish: 10
 --- !u!1 &676869865
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,7 +582,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 752428401192462624, guid: 9d2dc571b8a881b49806b1c14d67b8bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1967775771}
   m_SourcePrefab: {fileID: 100100000, guid: 9d2dc571b8a881b49806b1c14d67b8bf, type: 3}
 --- !u!224 &1071593686 stripped
 RectTransform:
@@ -896,6 +899,42 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f906c77905876d488e88e99d13c3d7d, type: 3}
+--- !u!1 &1967775768 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 752428401192462624, guid: 9d2dc571b8a881b49806b1c14d67b8bf, type: 3}
+  m_PrefabInstance: {fileID: 1038681471}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1967775769 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4063992254417623969, guid: 9d2dc571b8a881b49806b1c14d67b8bf, type: 3}
+  m_PrefabInstance: {fileID: 1038681471}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967775768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1967775771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967775768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fc0aa0bef0f21a49ae03171c48c1793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetImage: {fileID: 1967775769}
+  maxLineWidth: 500
+  maxVerticalOffset: 200
+  waveAmplitude: 75
+  waveFrequency: 0.25
+  smoothSpeed: 50
+  verticalNoiseStrength: 30
+  colorShiftSpeed: 0.1
 --- !u!1 &2082724416
 GameObject:
   m_ObjectHideFlags: 0

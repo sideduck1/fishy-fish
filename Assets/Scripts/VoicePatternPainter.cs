@@ -10,11 +10,15 @@ public class VoicePatternPainter : MonoBehaviour
     bool[,] drawnPixels;
 
     [Header("Vis parameters")]
-    public float maxLineWidth = 50f;       // maximale breedte van lijnen
-    public float maxVerticalOffset = 20f;  // verticale verschuiving door pitch
-    public float waveAmplitude = 10f;      // golvende patronen
-    public float waveFrequency = 0.05f;    // golfsnelheid
-    public float smoothSpeed = 5f;         // hoe vloeiend lijnen volgen
+    public float maxLineWidth = 50f;
+    public float maxVerticalOffset = 20f;
+    public float waveAmplitude = 10f;
+    public float waveFrequency = 0.05f;
+    public float smoothSpeed = 5f;
+
+    [Header("Variation")]
+    public float verticalNoiseStrength = 30f;
+    public float colorShiftSpeed = 0.1f;
 
     private float currentY;
 
@@ -22,7 +26,6 @@ public class VoicePatternPainter : MonoBehaviour
     {
         Texture2D original = targetImage.texture as Texture2D;
 
-        // Maak nieuwe veilige texture
         baseTexture = new Texture2D(original.width, original.height, TextureFormat.RGBA32, false);
         baseTexture.SetPixels(original.GetPixels());
         baseTexture.Apply();
@@ -38,21 +41,25 @@ public class VoicePatternPainter : MonoBehaviour
         currentY = drawTexture.height / 2;
     }
 
-
     void Update()
     {
         if (VoiceInput.loudness <= 0f) return;
 
-        // Map loudness naar lijnbreedte
         int lineWidth = Mathf.Max(1, (int)(VoiceInput.loudness * maxLineWidth));
 
-        // Map pitch naar verticale positie
-        float targetY = drawTexture.height / 2 + (VoiceInput.pitch / 256f - 0.5f) * 2f * maxVerticalOffset;
+        // 🎯 BASIS positie van pitch
+        float baseY = drawTexture.height / 2 +
+            (VoiceInput.pitch / 256f - 0.5f) * 2f * maxVerticalOffset;
 
-        // Lerp voor vloeiende verticale beweging
+        // 🔥 EXTRA VARIATIE zodat lagen niet stapelen
+        float noiseOffset = (Mathf.PerlinNoise(Time.time * 0.3f, 0f) - 0.5f) * verticalNoiseStrength;
+        float drift = Mathf.Sin(Time.time * 0.5f) * 10f;
+
+        float targetY = baseY + noiseOffset + drift;
+
+        // Smooth movement
         currentY = Mathf.Lerp(currentY, targetY, Time.deltaTime * smoothSpeed);
 
-        // Bereken golven op basis van perlin noise + loudness
         DrawOrganicLine(currentY, lineWidth, VoiceInput.loudness, VoiceInput.pitch);
     }
 
@@ -61,13 +68,15 @@ public class VoicePatternPainter : MonoBehaviour
         int width = drawTexture.width;
         int height = drawTexture.height;
 
-        // Kleur: pitch naar hue, zacht verloop voor mooi effect
-        float hue = Mathf.Clamp01(pitch / 256f);
-        Color lineColor = Color.HSVToRGB(hue, 1f, 1f);
+        // 🎨 KLEUR met variatie (heel belangrijk!)
+        float hue = Mathf.Repeat((pitch / 256f) + Time.time * colorShiftSpeed, 1f);
+        float saturation = Mathf.Clamp01(0.7f + loudness * 0.5f);
+        float value = Mathf.Clamp01(0.8f + loudness * 0.5f);
+
+        Color lineColor = Color.HSVToRGB(hue, saturation, value);
 
         for (int x = 0; x < width; x++)
         {
-            // Golvende verschuiving: combinatie van sinus en perlin noise
             float wave = Mathf.Sin(x * waveFrequency + Time.time * 2f) * waveAmplitude * loudness;
             wave += (Mathf.PerlinNoise(x * 0.1f, Time.time) - 0.5f) * waveAmplitude * 0.5f;
 
@@ -79,7 +88,10 @@ public class VoicePatternPainter : MonoBehaviour
                 if (baseTexture.GetPixel(x, y).a > 0.1f)
                 {
                     Color old = drawTexture.GetPixel(x, y);
-                    drawTexture.SetPixel(x, y, Color.Lerp(old, lineColor, 0.5f));
+
+                    // 🔥 Belangrijk: blijven layeren maar niet alles overschrijven
+                    drawTexture.SetPixel(x, y, Color.Lerp(old, lineColor, 0.25f));
+
                     drawnPixels[x, y] = true;
                 }
             }
@@ -88,7 +100,6 @@ public class VoicePatternPainter : MonoBehaviour
         drawTexture.Apply();
     }
 
-    // Check of er genoeg pixels getekend zijn door stem
     public bool HasSufficientDrawing(int minPixels = 50)
     {
         int count = 0;
