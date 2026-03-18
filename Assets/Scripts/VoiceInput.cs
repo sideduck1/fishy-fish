@@ -3,15 +3,22 @@
 public class VoiceInput : MonoBehaviour
 {
     public static float loudness;
-    public static float pitch;
+    public static float pitch; // in Hz
 
     [Header("Sensitivity")]
-    [Tooltip("Minimum volume om te registreren")]
-    public float minLoudness = 0.05f; // alles onder 0.05 wordt genegeerd
+    public float minLoudness = 0.05f;
+
+    [Header("Microphone Gain")]
+    [Range(0.1f, 10f)]
+    public float micGain = 1f;
+
+    [Header("Pitch Settings")]
+    public float minPitch = 80f;
+    public float maxPitch = 1000f;
 
     private AudioClip micClip;
     private string micDevice;
-    private int sampleWindow = 256;
+    private int sampleWindow = 1024;
 
     void Start()
     {
@@ -19,7 +26,6 @@ public class VoiceInput : MonoBehaviour
         {
             micDevice = Microphone.devices[0];
             micClip = Microphone.Start(micDevice, true, 10, 44100);
-            Debug.Log("🎤 Microfoon gestart: " + micDevice);
         }
         else
         {
@@ -31,19 +37,17 @@ public class VoiceInput : MonoBehaviour
     {
         if (micClip == null) return;
 
-        loudness = GetLoudness();
-        pitch = GetPitch();
+        loudness = GetLoudness() * micGain;
+        loudness = Mathf.Clamp01(loudness);
 
-        // minimale input toepassen
         if (loudness < minLoudness)
         {
             loudness = 0f;
+            pitch = 0f;
+            return;
         }
 
-        if (loudness > 0f)
-            Debug.Log("🟢 Stem gedetecteerd! Loudness: " + loudness + " | Pitch: " + pitch);
-        else
-            Debug.Log("🔴 Stilte gedetecteerd. Loudness: " + loudness);
+        pitch = GetPitch();
     }
 
     float GetLoudness()
@@ -51,6 +55,7 @@ public class VoiceInput : MonoBehaviour
         float[] samples = new float[sampleWindow];
         int micPos = Microphone.GetPosition(micDevice) - sampleWindow;
         if (micPos < 0) return 0;
+
         micClip.GetData(samples, micPos);
 
         float sum = 0f;
@@ -58,6 +63,7 @@ public class VoiceInput : MonoBehaviour
         {
             sum += Mathf.Abs(samples[i]);
         }
+
         return sum / samples.Length;
     }
 
@@ -66,18 +72,35 @@ public class VoiceInput : MonoBehaviour
         float[] samples = new float[sampleWindow];
         int micPos = Microphone.GetPosition(micDevice) - sampleWindow;
         if (micPos < 0) return 0;
+
         micClip.GetData(samples, micPos);
 
-        float maxVal = 0f;
-        int maxIndex = 0;
-        for (int i = 0; i < samples.Length; i++)
+        int bestOffset = 0;
+        float bestCorrelation = 0f;
+
+        for (int offset = 20; offset < 500; offset++)
         {
-            if (Mathf.Abs(samples[i]) > maxVal)
+            float correlation = 0f;
+
+            for (int i = 0; i < sampleWindow - offset; i++)
             {
-                maxVal = Mathf.Abs(samples[i]);
-                maxIndex = i;
+                correlation += samples[i] * samples[i + offset];
+            }
+
+            if (correlation > bestCorrelation)
+            {
+                bestCorrelation = correlation;
+                bestOffset = offset;
             }
         }
-        return maxIndex;
+
+        if (bestOffset == 0) return 0;
+
+        float frequency = 44100f / bestOffset;
+
+        if (frequency < minPitch || frequency > maxPitch)
+            return 0;
+
+        return frequency;
     }
 }

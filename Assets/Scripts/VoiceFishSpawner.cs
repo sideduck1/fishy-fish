@@ -23,14 +23,11 @@ public class VoiceFishSpawner : MonoBehaviour
     {
         if (patternPainter == null) return;
 
-        // ✅ Check of er voldoende pixels door stem getekend zijn
         if (!hasDrawn && patternPainter.HasSufficientDrawing())
         {
             hasDrawn = true;
-            Debug.Log("✏️ Er is voldoende getekend door stem, spawn mogelijk na stilte");
         }
 
-        // Alleen spawn als er daadwerkelijk getekend is
         if (hasDrawn)
         {
             if (VoiceInput.loudness <= loudnessThreshold)
@@ -41,12 +38,12 @@ public class VoiceFishSpawner : MonoBehaviour
                 {
                     SpawnFish();
                     silentTimer = 0f;
-                    hasDrawn = false; // reset flag
+                    hasDrawn = false;
                 }
             }
             else
             {
-                silentTimer = 0f; // praten → reset timer
+                silentTimer = 0f;
             }
         }
     }
@@ -54,19 +51,13 @@ public class VoiceFishSpawner : MonoBehaviour
     void SpawnFish()
     {
         Texture2D tex = patternPainter.GetTexture();
-        if (tex == null)
-        {
-            Debug.LogWarning("❌ Geen texture gevonden, spawn geannuleerd");
-            return;
-        }
+        if (tex == null) return;
 
         GameObject fish = Instantiate(fishPrefab, spawnParent);
         fishLimitManager.RegisterFish(fish);
 
+        RawImage ri = fish.GetComponent<RawImage>() ?? fish.GetComponentInChildren<RawImage>();
 
-        RawImage ri = fish.GetComponent<RawImage>();
-        if (ri == null)
-            ri = fish.GetComponentInChildren<RawImage>();
         if (ri == null)
         {
             Debug.LogError("❌ Geen RawImage op FishPrefab");
@@ -87,7 +78,6 @@ public class VoiceFishSpawner : MonoBehaviour
         if (fish.GetComponent<FishMovement>() == null)
             fish.AddComponent<FishMovement>();
 
-        // Reset canvas voor volgende vis
         patternPainter.ResetCanvas();
 
         Debug.Log("🐟 Vis gespawned!");

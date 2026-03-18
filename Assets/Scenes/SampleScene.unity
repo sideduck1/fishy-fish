@@ -658,6 +658,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minLoudness: 0.05
+  micGain: 1
+  minPitch: 80
+  maxPitch: 1000
 --- !u!4 &1776161709
 Transform:
   m_ObjectHideFlags: 0
@@ -929,12 +932,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetImage: {fileID: 1967775769}
   maxLineWidth: 500
-  maxVerticalOffset: 200
-  waveAmplitude: 75
-  waveFrequency: 0.25
-  smoothSpeed: 50
-  verticalNoiseStrength: 30
-  colorShiftSpeed: 0.1
+  maxVerticalOffset: 25
+  waveAmplitude: 250
+  waveFrequency: 1
+  smoothSpeed: 25
+  minPitch: 80
+  maxPitch: 1000
+  verticalNoiseStrength: 1000
+  driftSpeed: 0.5
+  colorVariation: 0.05
 --- !u!1 &2082724416
 GameObject:
   m_ObjectHideFlags: 0
