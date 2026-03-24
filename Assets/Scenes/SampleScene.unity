@@ -933,13 +933,13 @@ MonoBehaviour:
   targetImage: {fileID: 1967775769}
   maxLineWidth: 500
   maxVerticalOffset: 25
-  waveAmplitude: 250
-  waveFrequency: 1
+  waveAmplitude: 25
+  waveFrequency: 100
   smoothSpeed: 25
   minPitch: 80
   maxPitch: 1000
-  verticalNoiseStrength: 1000
-  driftSpeed: 0.5
+  verticalNoiseStrength: 250
+  driftSpeed: 1000
   colorVariation: 0.05
 --- !u!1 &2082724416
 GameObject:
