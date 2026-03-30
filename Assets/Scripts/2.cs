@@ -17,7 +17,7 @@
 //    RawImage ri = fish.GetComponent<RawImage>();
 //    ri.texture = tex;
 //    ri.color = Color.white;
-
+    
 //    // RectTransform instellen
 //    RectTransform rt = fish.GetComponent<RectTransform>();
 //    rt.anchoredPosition = Vector2.zero; // startpositie wordt random in FishMovement
