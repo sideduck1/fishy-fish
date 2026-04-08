@@ -35,6 +35,9 @@ public class FishSpawner : MonoBehaviour
     [Tooltip("Max number of fish swimming at once (oldest removed when exceeded)")]
     public int maxFish = 10;
 
+    [Tooltip("Scale applied to every spawned fish (1 = full size, 0.4 = 40%)")]
+    public float fishScale = 0.4f;
+
     [Tooltip("Z depth for spawned fish")]
     public float spawnZ = 0f;
 
@@ -101,6 +104,7 @@ public class FishSpawner : MonoBehaviour
 
         Vector3 spawnPos = new Vector3(spawnX, spawnY, spawnZ);
         GameObject fish = Instantiate(fishPrefab, spawnPos, Quaternion.identity);
+        fish.transform.localScale = Vector3.one * fishScale;
 
         // Apply texture
         SpriteRenderer sr = fish.GetComponent<SpriteRenderer>();
