@@ -104,8 +104,13 @@ public class FishReceiver : MonoBehaviour
 
     private IEnumerator Connect()
     {
-        Debug.Log($"[FishReceiver] Connecting to {serverUrl}…");
-        _ws = new WebSocket(serverUrl);
+        // Normalize: https → wss, http → ws (in case Inspector has the wrong prefix)
+        string wsUrl = serverUrl
+            .Replace("https://", "wss://")
+            .Replace("http://", "ws://");
+
+        Debug.Log($"[FishReceiver] Connecting to {wsUrl}…");
+        _ws = new WebSocket(wsUrl);
 
         _ws.OnOpen += () => Debug.Log("[FishReceiver] ✅ Connected to server");
         _ws.OnError += (e) => Debug.LogWarning($"[FishReceiver] ⚠️ Error: {e}");

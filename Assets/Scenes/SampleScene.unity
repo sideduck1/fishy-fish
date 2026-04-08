@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishPrefab: {fileID: 8484770118934142522, guid: d98baf80ef72a4e4a909b87a983f0bd3, type: 3}
   maxFish: 10
+  fishScale: 0.4
   spawnZ: 0
   challengePanel: {fileID: 0}
   challengeTitleText: {fileID: 0}
